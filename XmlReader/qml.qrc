@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>xml/CityList.xml</file>
+        <file>xml/Test.xml</file>
+    </qresource>
+</RCC>
