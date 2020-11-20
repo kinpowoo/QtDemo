@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>CheckBox.qml</file>
+        <file>Button.qml</file>
+        <file>images/checkmark.png</file>
+        <file>js/Net.js</file>
+    </qresource>
+</RCC>
