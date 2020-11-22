@@ -2,7 +2,6 @@
 #include "CityModel.h"
 
 CityModel::CityModel(QObject *n):m_name(),m_areas(){
-
 }
 
 CityModel::~CityModel(){
@@ -37,7 +36,6 @@ CityModel* CityModel::operator=(const CityModel *const c){
     return this;
 }
 
-
 void CityModel::setName(const QString &n){
     m_name = n;
 }
@@ -55,8 +53,6 @@ void CityModel::setAreas(QStringList const&area){
 void CityModel::appendArea(QString &areaName){
     m_areas.append(areaName);
 }
-
-
 
 
 void CityModel::clearAreas(){

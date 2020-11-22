@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <thread>
 
-
 #ifndef PROVINCEMDOEL_H
 #define PROVINCEMDOEL_H
 
@@ -38,6 +37,4 @@ private:
 };
 
 Q_DECLARE_METATYPE(ProvinceModel);
-
-
 #endif // PROVINCEMDOEL_H

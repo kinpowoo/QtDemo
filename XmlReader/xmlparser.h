@@ -24,7 +24,6 @@ public:
 signals:
     void parseFinish(const QMap<QString,QStringList> data);
 
-
 public slots:
     void parse();   //开始解析
 
@@ -32,8 +31,6 @@ public:
     Q_INVOKABLE QStringList getProvinces();
     Q_INVOKABLE QStringList getCities(QString provinceName);
     Q_INVOKABLE QStringList getAreas(QString cName);
-
-
 
 private:
     void readElement(QXmlStreamReader &reader);
@@ -44,6 +41,7 @@ private:
     MyThread *myThread;
     int curPid;
     int curCid;
+
     QString curPn;
     QString curCn;
 

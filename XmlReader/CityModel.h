@@ -2,8 +2,10 @@
 #include <QString>
 #include <QObject>
 #include <QMetaType>
+
 #include <stdlib.h>
 #include <thread>
+
 
 #ifndef CITYMODEL_H
 #define CITYMODEL_H
@@ -28,6 +30,7 @@ public:
 
     Q_INVOKABLE QStringList getAreas() const;
     void setAreas(QStringList const&area);
+
     void appendArea(QString &areaName);
     void clearAreas();
 

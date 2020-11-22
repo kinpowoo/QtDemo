@@ -33,8 +33,6 @@ ProvinceModel* ProvinceModel::operator=(const ProvinceModel *n){
     return this;
 }
 
-
-
 void ProvinceModel::setName(const QString &n){
     m_name = n;
 }

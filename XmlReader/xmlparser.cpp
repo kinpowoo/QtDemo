@@ -12,7 +12,9 @@
 using namespace QtConcurrent;
 
 
+
 XmlParser::XmlParser(QObject *parent) : QObject(parent),saveData(),pMap(),cMap()
+
 {
     myThread = new MyThread();
     connect(myThread,&QThread::finished,myThread,&QObject::deleteLater);
@@ -71,7 +73,6 @@ void XmlParser::readElement(QXmlStreamReader &reader){
 
         // 读取下一个元素
         QXmlStreamReader::TokenType nType = reader.tokenType();
-
         switch (nType) {
             case QXmlStreamReader::StartDocument: {  // 开始文档
                 qDebug() << "********** 开始文档（XML 声明） ********** ";
@@ -128,16 +129,14 @@ void XmlParser::readElement(QXmlStreamReader &reader){
 
                         //qDebug() << "省名称:"<< province;
                         curPid += 1;
-
                     }
 
                 }else if(QString::compare(strElementName,"City") == 0){  //市
                     QXmlStreamAttributes attributes = reader.attributes();
                     if (attributes.hasAttribute("Value")) {
                         QString city = attributes.value("Value").toString();
+
                         curCn = city;
-
-
                         pMap[curPn].push_back(city);
                         cMap[curCn] = QStringList();
 
@@ -148,7 +147,6 @@ void XmlParser::readElement(QXmlStreamReader &reader){
 
                         //qDebug() << "市名称:"<< city;
                         curCid += 1;
-
                     }
 
                 }else if(QString::compare(strElementName,"District") == 0){  //区
