@@ -232,17 +232,18 @@ QList<ProvinceModel*> XmlParser::getP(){
 QStringList XmlParser::getProvinces(){
     return pMap.keys();
 }
-QStringList XmlParser::getCities(QString provinceName){
+QStringList XmlParser::getCities(const QString &provinceName){
     if(pMap.contains(provinceName)){
-        QStringList cities = pMap.take(provinceName);
+        QStringList cities = pMap[provinceName];
         return cities;
     }
     return QStringList();
 }
 
-QStringList XmlParser::getAreas(QString cName){
+QStringList XmlParser::getAreas(const QString &cName){
     if(cMap.contains(cName)){
-        QStringList areas = cMap.take(cName);
+        // cMap 用 take 方法取出值 会将 key 从 cMap中删除,如果不想数据丢失，还是用[]符号取比较好
+        QStringList areas = cMap[cName];
         return areas;
     }
     return QStringList();

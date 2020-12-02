@@ -105,6 +105,13 @@ void Person::loadJson(){
         QJsonValue address = obj["Address"];
         QJsonObject addrObj = address.toObject();
 
+
+        QJsonObject::const_iterator iter = addrObj.constBegin();
+        for(;iter != addrObj.constEnd();iter++){
+            qDebug()<<"key :"<<iter.key() <<  "value: "<<iter.value().toString();
+        }
+
+
         QStringList list = addrObj.keys();
         int size = addrObj.length();
         QVariantMap map;
@@ -116,14 +123,13 @@ void Person::loadJson(){
 
         //解析电话数组
         QJsonValue phoneNumbers = obj["Phone numbers"];
-
         QJsonArray phoneArr = phoneNumbers.toArray();
         m_phones.clear();
         for(int i=0;i<phoneArr.count();i++){
             QJsonValue item = phoneArr[i];
             m_phones.append(item.toString());
         }
-        qDebug()<<"长度:"<<m_phones.count();
+
 
         qDebug()<<"对象:"<<phoneNumbers.isObject()<<"; 数组:"<<phoneNumbers.isArray();
         loadFile.close();

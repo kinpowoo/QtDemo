@@ -15,7 +15,7 @@ CityModel::CityModel(const CityModel &c){
         this->m_areas.append(a);
     }
 }
-CityModel CityModel::operator=(const CityModel &c){
+CityModel &CityModel::operator=(const CityModel &c){
     if(this != &c){
         CityModel temp(c);
         m_name = temp.m_name;

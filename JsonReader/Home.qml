@@ -124,7 +124,7 @@ Item {
                  anchors.fill: parent
                  text: phone
                  font.pixelSize: 20
-                 font.pointSize: 15
+
                  font.bold: true
                  font.italic: true
                  font.weight: Font.DemiBold

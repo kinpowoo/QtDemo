@@ -14,43 +14,48 @@ ApplicationWindow {
     title: qsTr("Tabs")
 
     signal queryClicked
-
+    property int pLastIdx: -1
+    property int cLastIdx: -1
+    property int aLastIdx: -1
     //发送信号给C++
     function jsParseFinish(obj) {
         //C++解析完成回调
         //var provinces = xmlData.getP();
-        var provinces = obj;
-        for(var m in provinces){
-            console.log("===============================")
-            console.log("省:"+provinces[m].getName())
-            var cities = provinces[m].getCities()
+//        var provinces = obj;
+//        for(var m in provinces){
+//            console.log("===============================")
+//            console.log("省:"+provinces[m].getName())
+//            var cities = provinces[m].getCities()
 
-            for(var n in cities){
-                var c = cities[n];
-                console.log("市:"+c.getName())
-                var areas = c.getAreas();
-                console.log("区:"+areas)
-            }
-        }
+//            for(var n in cities){
+//                var c = cities[n];
+//                console.log("市:"+c.getName())
+//                var areas = c.getAreas();
+//                console.log("区:"+areas)
+//            }
+//        }
 
         var pList = xmlData.getProvinces()
         for (var p in pList) {
             //console.log((item.getName()))
             listData1.append({
-                                 "name": pList[p]
+                                 "name": pList[p],
+                                 "selected":false
                              })
         }
         var pCities = xmlData.getCities("上海市")
         for (var j in pCities) {
             listData2.append({
-                                 "name": pCities[j]
+                                 "name": pCities[j],
+                                 "selected":false
                              })
         }
 
         var areas = xmlData.getAreas("上海市")
         for (var k in areas) {
             listData3.append({
-                                 "name": areas[k]
+                                 "name": areas[k],
+                                 "selected":false
                              })
         }
 
@@ -65,13 +70,23 @@ ApplicationWindow {
     Button {
         x: 560
         y: 20
-        width: 80
-        height: 30
+        width: 70
+        height: 40
         id: clickToParse
-        text: qsTr("点击解析")
+        Text{
+            anchors.centerIn: parent
+            color: "white"
+            text: qsTr("点击解析")
+            font.pixelSize: 14
+            font.bold: true
+        }
         Layout.alignment: Qt.AlignHCenter
         onClicked: {
             queryClicked()
+        }
+        background: Rectangle{
+            color: "gray"
+
         }
     }
 
@@ -79,149 +94,237 @@ ApplicationWindow {
         id: xmlData
     }
 
-    ListView {
-        id: provinceListView
+    ScrollView{
         x: 20
         y: 20
         width: 180
         height: 200
-        delegate: Item {
-            width: 180
-            height: 40
-            Text {
-                text: name
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.bold: true
-            }
-        }
-        header: Component {
-            Text {
-                x: 30
-                width: 120
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ListView {
+            id: provinceListView
+            anchors.fill: parent
+            delegate: ItemDelegate {
+                id:pItem
+                x:15
+                width: 150
                 height: 40
-                color: "white"
-                text: qsTr("省")
-                font: {
-                    weight: 40
-                    pixelSize: 40
-                    bold: true
-                }
-                horizontalAlignment: Qt.AlignHCenter
-                verticalAlignment: Qt.AlignVCenter
-                style: Text.Outline
-                Rectangle {
-                    z: -1
+                hoverEnabled: true
+                background: Rectangle{
                     anchors.fill: parent
-                    color: "orange"
+                    color:selected?"purple":"white"
+                }
+
+                Text {
+                    text: name
+                    color: selected?"white":"black"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.bold: true
+                }
+
+                onClicked: {
+                    if(pLastIdx !=-1){
+                        listData1.get(pLastIdx).selected = false
+                        listData1.get(index).selected = true
+                        provinceListView.positionViewAtIndex(index,ListView.Visible)
+                        pLastIdx = index
+                    }else{
+                        pLastIdx = index
+                        listData1.get(index).selected = true
+                    }
+
+                    provinceListView.currentIndex = index
+                    var provinceName = listData1.get(index).name
+
+                    var pCities = xmlData.getCities(provinceName)
+                    listData2.clear()
+                    for (var j in pCities) {
+                        listData2.append({
+                                             "name": pCities[j],
+                                             "selected":false
+                                         })
+                    }
+
+                    var firstCity = pCities[0]
+                    var areas = xmlData.getAreas(firstCity)
+                    listData3.clear()
+                    for (var k in areas) {
+                        listData3.append({
+                                             "name": areas[k],
+                                             "selected":false
+                                         })
+                    }
+
                 }
             }
-        }
+            header: Component {
+                Text {
+                    x:15
+                    width: provinceListView.width - 30
+                    height: 40
+                    color: "white"
+                    text: qsTr("省")
+                    font.weight: Font.Medium
+                    font.pixelSize: 20
+                    font.bold:true
 
-        model: ListModel {
-            id: listData1
-        }
+                    horizontalAlignment: Qt.AlignHCenter
+                    verticalAlignment: Qt.AlignVCenter
+                    style: Text.Outline
+                    Rectangle {
+                        z: -1
+                        anchors.fill: parent
+                        color: "orange"
+                    }
+                }
+            }
 
-        section.delegate: {
-            console.log("clicked")
+            model: ListModel {
+                id: listData1
+            }
         }
     }
 
-    ListView {
-        id: cityListView
+    ScrollView{
         x: 200
         y: 20
         width: 180
         height: 200
-        delegate: Item {
-            width: 180
-            height: 40
-            Text {
-                text: name
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.bold: true
-            }
-        }
-        header: Component {
-            Text {
-                x: 30
-                width: 120
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ListView {
+            id: cityListView
+            anchors.fill:parent
+            delegate: ItemDelegate {
+                id:cItem
+                x:15
+                width: 150
                 height: 40
-                color: "white"
-                text: qsTr("市")
-                font: {
-                    weight: 40
-                    pixelSize: 40
-                    bold: true
+                Text {
+                    text: name
+                    color: selected?"white":"black"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.bold: true
                 }
-                style: Text.Outline
-                horizontalAlignment: Qt.AlignHCenter
-                verticalAlignment: Qt.AlignVCenter
-                Rectangle {
-                    z: -1
+                focusPolicy: Qt.ClickFocus
+                background: Rectangle{
                     anchors.fill: parent
-                    color: "orange"
+                    color:selected?"purple":"white"
+                }
+
+                onClicked: {
+                    if(cLastIdx !=-1){
+                        listData2.get(cLastIdx).selected = false
+                        listData2.get(index).selected = true
+                        cityListView.positionViewAtIndex(index,ListView.Visible)
+                        cLastIdx = index
+                    }else{
+                        cLastIdx = index
+                        listData2.get(index).selected = true
+                    }
+
+                    cityListView.currentIndex = index
+                    var cityName = listData2.get(index).name
+                    var areas = xmlData.getAreas(cityName)
+                    listData3.clear()
+                    for (var k in areas) {
+                        listData3.append({
+                                             "name": areas[k],
+                                             "selected":false
+                                         })
+                    }
                 }
             }
-        }
+            header: Component {
+                Text {
+                    x:15
+                    width: cityListView.width - 30
+                    height: 40
+                    color: "white"
+                    text: qsTr("市")
+                    font.weight: Font.Medium
+                    font.pixelSize: 20
+                    font.bold:true
 
-        model: ListModel {
-            id: listData2
+                    style: Text.Outline
+                    horizontalAlignment: Qt.AlignHCenter
+                    verticalAlignment: Qt.AlignVCenter
+                    Rectangle {
+                        z: -1
+                        anchors.fill: parent
+                        color: "orange"
+                    }
+                }
+            }
+
+            model: ListModel {
+                id: listData2
+            }
         }
     }
 
-    ListView {
-        id: areaListView
+    ScrollView{
         x: 380
         y: 20
         width: 180
         height: 200
-        delegate: Item {
-            width: 180
-            height: 40
-            Text {
-                text: name
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.bold: true
-            }
-        }
-        header: Component {
-            Text {
-                x: 30
-                width: 120
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        ListView {
+            id: areaListView
+            anchors.fill:parent
+            delegate: ItemDelegate {
+                x:15
+                width: 150
                 height: 40
-                color: "white"
-                text: qsTr("区")
-                font: {
-                    weight: 40
-                    pixelSize: 40
-                    bold: true
-                }
-                style: Text.Outline
-                horizontalAlignment: Qt.AlignHCenter
-                verticalAlignment: Qt.AlignVCenter
-                Rectangle {
-                    z: -1
+                background: Rectangle{
                     anchors.fill: parent
-                    color: "orange"
+                    color: selected?"purple":"white"
+                }
+
+                Text {
+                    text: name
+                    color: selected?"white":"black"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.bold: true
+                }
+                onClicked: {
+                    if(aLastIdx !=-1){
+                        listData3.get(aLastIdx).selected = false
+                        areaListView.positionViewAtIndex(index,ListView.Visible)
+
+                        listData3.get(index).selected = true
+                        aLastIdx = index
+                    }else{
+                        aLastIdx = index
+                        listData3.get(index).selected = true
+                    }
                 }
             }
-        }
-        model: ListModel {
-            id: listData3
-        }
-    }
+            header: Component {
+                Text {
+                    x:15
+                    width: areaListView.width - 30
+                    height: 40
+                    color: "white"
+                    text: qsTr("区")
+                    font.weight: Font.Medium
+                    font.pixelSize: 20
+                    font.bold:true
 
-    Button{
-        x:20
-        y:280
-        width:80
-        height: 40
-        text: qsTr("当前item")
-        onClicked: {
-           console.log("省一级条目被点击"+ provinceListView.currentIndex)
+                    style: Text.Outline
+                    horizontalAlignment: Qt.AlignHCenter
+                    verticalAlignment: Qt.AlignVCenter
+                    Rectangle {
+                        z: -1
+                        anchors.fill: parent
+                        color: "orange"
+                    }
+                }
+            }
+            model: ListModel {
+                id: listData3
+            }
         }
     }
 

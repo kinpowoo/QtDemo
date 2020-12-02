@@ -33,8 +33,8 @@ public slots:
 public:
     Q_INVOKABLE QList<ProvinceModel*> getP();
     Q_INVOKABLE QStringList getProvinces();
-    Q_INVOKABLE QStringList getCities(QString provinceName);
-    Q_INVOKABLE QStringList getAreas(QString cName);
+    Q_INVOKABLE QStringList getCities(const QString &provinceName);
+    Q_INVOKABLE QStringList getAreas(const QString &cName);
 
 private:
     void readElement(QXmlStreamReader &reader);

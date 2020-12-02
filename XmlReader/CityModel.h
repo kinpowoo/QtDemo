@@ -22,7 +22,7 @@ public:
     explicit CityModel(QObject *n=nullptr);
     ~CityModel();
     CityModel(const CityModel &c);
-    CityModel operator=(const CityModel &c);
+    CityModel &operator=(const CityModel &c);
     CityModel* operator=(const CityModel *const c);
 
     void setName(const QString &n);
