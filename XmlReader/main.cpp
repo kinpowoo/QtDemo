@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<CityModel>("CityModel");
     qRegisterMetaType<CityModel>("CityModel&");
     qRegisterMetaType<QList<ProvinceModel>>("QList<ProvinceModel>");
+    qRegisterMetaType<QList<ProvinceModel>>("QList<ProvinceModel*>");
     qRegisterMetaType<QList<CityModel>>("QList<CityModel>");
     qRegisterMetaType<QList<ProvinceModel>>("QList<ProvinceModel>");
     qRegisterMetaType<QMap<QString,QStringList>>("QMap<QString,QStringList>");

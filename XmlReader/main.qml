@@ -18,7 +18,20 @@ ApplicationWindow {
     //发送信号给C++
     function jsParseFinish(obj) {
         //C++解析完成回调
-        console.log("解析结束，开始显示数据:")
+        //var provinces = xmlData.getP();
+        var provinces = obj;
+        for(var m in provinces){
+            console.log("===============================")
+            console.log("省:"+provinces[m].getName())
+            var cities = provinces[m].getCities()
+
+            for(var n in cities){
+                var c = cities[n];
+                console.log("市:"+c.getName())
+                var areas = c.getAreas();
+                console.log("区:"+areas)
+            }
+        }
 
         var pList = xmlData.getProvinces()
         for (var p in pList) {
@@ -42,6 +55,11 @@ ApplicationWindow {
         }
 
         //listView.model = newList
+    }
+
+    function onProvinceItemClick(obj){
+        console.log("省一级条目被点击"+ provinceListView.currentIndex)
+
     }
 
     Button {
@@ -125,7 +143,6 @@ ApplicationWindow {
                 font.bold: true
             }
         }
-
         header: Component {
             Text {
                 x: 30
@@ -148,6 +165,7 @@ ApplicationWindow {
                 }
             }
         }
+
         model: ListModel {
             id: listData2
         }
@@ -196,9 +214,21 @@ ApplicationWindow {
         }
     }
 
+    Button{
+        x:20
+        y:280
+        width:80
+        height: 40
+        text: qsTr("当前item")
+        onClicked: {
+           console.log("省一级条目被点击"+ provinceListView.currentIndex)
+        }
+    }
+
     Component.onCompleted: {
         xmlData.onParseFinish.connect(jsParseFinish)
         queryClicked.connect(xmlData.parse)
+        provinceListView.onClicked.connect(onProvinceItemClick)
     }
 
     footer: TabBar {

@@ -13,7 +13,7 @@ using namespace QtConcurrent;
 
 
 
-XmlParser::XmlParser(QObject *parent) : QObject(parent),saveData(),pMap(),cMap()
+XmlParser::XmlParser(QObject *parent) : QObject(parent),provinces(),saveData(),pMap(),cMap()
 
 {
     myThread = new MyThread();
@@ -125,6 +125,10 @@ void XmlParser::readElement(QXmlStreamReader &reader){
                         curPn = province;
                         pMap[curPn] = QStringList();
 
+                        ProvinceModel *p = new ProvinceModel();
+                        p->setName(province);
+                        provinces.append(p);
+
                         saveData[curPn] = QList<QMap<QString,QStringList>>();
 
                         //qDebug() << "省名称:"<< province;
@@ -135,6 +139,11 @@ void XmlParser::readElement(QXmlStreamReader &reader){
                     QXmlStreamAttributes attributes = reader.attributes();
                     if (attributes.hasAttribute("Value")) {
                         QString city = attributes.value("Value").toString();
+
+                        CityModel *c = new CityModel();
+                        c->setName(city);
+                        provinces.at(curPid)->appendCity(c);
+
 
                         curCn = city;
                         pMap[curPn].push_back(city);
@@ -153,6 +162,10 @@ void XmlParser::readElement(QXmlStreamReader &reader){
                     QXmlStreamAttributes attributes = reader.attributes();
                     if (attributes.hasAttribute("Value")) {
                         QString area = attributes.value("Value").toString();
+
+
+                        provinces.at(curPid)->gainCities().at(curCid)->appendArea(area);
+
 
                         cMap[curCn].push_back(area);
 
@@ -204,11 +217,18 @@ void XmlParser::readElement(QXmlStreamReader &reader){
         qDebug() << "省长度：" << pMap.count() << ", 省名: "<< "北京市";
         qDebug() << "市长度: " << pMap["北京市"].count();
         qDebug() << "区长度: " << cMap["北京市"].count();
-        emit parseFinish(pMap);
+        QVariantList list;
+        for(int i=0;i<provinces.count();i++){
+            ProvinceModel* province = provinces.at(i);
+            list << QVariant::fromValue(*province);
+        }
+        emit parseFinish(list);
     }
 }
 
-
+QList<ProvinceModel*> XmlParser::getP(){
+    return provinces;
+}
 QStringList XmlParser::getProvinces(){
     return pMap.keys();
 }

@@ -40,6 +40,9 @@ void CityModel::setName(const QString &n){
     m_name = n;
 }
 
+QString CityModel::getName() const{
+    return m_name;
+}
 
 QStringList CityModel::getAreas() const
 {

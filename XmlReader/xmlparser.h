@@ -8,6 +8,8 @@
 #include "cppthread/taskqueue.h"
 #include <qmap.h>
 #include <QMap>
+#include <QQmlListProperty>
+#include <QQmlPropertyMap>
 #include <qlist.h>
 #include <QList>
 #include <QString>
@@ -22,12 +24,14 @@ public:
     ~XmlParser();
 
 signals:
-    void parseFinish(const QMap<QString,QStringList> data);
+    //void parseFinish(const QMap<QString,QStringList> data);
+    void parseFinish(const QVariantList &data);
 
 public slots:
     void parse();   //开始解析
 
 public:
+    Q_INVOKABLE QList<ProvinceModel*> getP();
     Q_INVOKABLE QStringList getProvinces();
     Q_INVOKABLE QStringList getCities(QString provinceName);
     Q_INVOKABLE QStringList getAreas(QString cName);
@@ -45,6 +49,7 @@ private:
     QString curPn;
     QString curCn;
 
+    QList<ProvinceModel*> provinces;
     QMap<QString,QList<QMap<QString,QStringList>>> saveData;
     QMap<QString,QStringList> pMap;
     QMap<QString,QStringList> cMap;

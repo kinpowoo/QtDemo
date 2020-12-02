@@ -11,7 +11,8 @@ ProvinceModel::ProvinceModel(const ProvinceModel &p){
     this->m_name = p.m_name;
     QList<CityModel> nCities;
     this->m_cities.clear();
-    for(CityModel c : p.getCities()){
+    QList<CityModel*> tmpCities = p.gainCities();
+    for(CityModel *c : tmpCities){
         this->m_cities.append(c);
     }
 }
@@ -19,7 +20,7 @@ ProvinceModel ProvinceModel::operator=(const ProvinceModel &n){
     if(this != &n){
         ProvinceModel temp(n);
         this->m_name = temp.m_name;
-        this->m_cities = temp.getCities();
+        this->m_cities = temp.gainCities();
     }
     return *this;
 }
@@ -42,16 +43,31 @@ QString ProvinceModel::getName() const{
 }
 
 
-void ProvinceModel::appendCity(CityModel &city){
+void ProvinceModel::appendCity(CityModel *city){
     m_cities.append(city);
 }
 
-QList<CityModel> ProvinceModel::getCities() const{
+QVariantList ProvinceModel::getCities(){
+    QVariantList list;
+    for(int i =0;i<m_cities.count();i++){
+        CityModel* city = m_cities[i];
+        CityModel tmp = *city;
+        list << QVariant::fromValue(tmp);
+    }
+    return list;
+}
+
+QList<CityModel*> ProvinceModel::gainCities() const{
     return m_cities;
 }
 
-void ProvinceModel::setCities(QList<CityModel> const&city){
-    m_cities = city;
+void ProvinceModel::setCities(QVariantList const&city){
+    m_cities.clear();
+    for(int i =0;i<city.count();i++){
+        QVariant c = city.at(i);
+        CityModel tmp = c.value<CityModel>();
+        m_cities.append(&tmp);
+    }
 }
 
 void ProvinceModel::clearCity(){

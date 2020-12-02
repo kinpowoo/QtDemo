@@ -14,7 +14,7 @@ using namespace std;
 
 class CityModel : public QObject{
     Q_GADGET
-    Q_PROPERTY(QString name READ name WRITE setName);
+    Q_PROPERTY(QString name READ getName WRITE setName);
     Q_PROPERTY(QStringList areas READ getAreas);
 
 
@@ -26,7 +26,7 @@ public:
     CityModel* operator=(const CityModel *const c);
 
     void setName(const QString &n);
-    Q_INVOKABLE QString name() const{return m_name;}
+    Q_INVOKABLE QString getName() const;
 
     Q_INVOKABLE QStringList getAreas() const;
     void setAreas(QStringList const&area);
