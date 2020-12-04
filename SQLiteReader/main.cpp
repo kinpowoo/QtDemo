@@ -3,6 +3,8 @@
 #include <QTextCodec>
 #include "people.h"
 #include "sqlitehelper.h"
+#include <QQuickView>
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
@@ -15,20 +17,23 @@ int main(int argc, char *argv[])
     qmlRegisterType<People>("People",1,0,"People");
     qmlRegisterType<SqliteHelper>("SqliteHelper",1,0,"SqliteHelper");
     qRegisterMetaType<People>("People");
-    qRegisterMetaType<SqliteHelper>("SqliteHelper");
+    qRegisterMetaType<People>("People&");
+    qRegisterMetaType<People*>("People*");
+    qRegisterMetaType<QList<People>>("QList<People>");
+    qRegisterMetaType<QList<People*>>("QList<People*>");
+    //qRegisterMetaType<SqliteHelper>("SqliteHelper");
 
-    SqliteHelper helper;
 
     QQmlApplicationEngine engine;
-
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
+
     engine.load(url);
-    engine.setProperty("dbHepler",QVariant::fromValue(helper));
+
 
     return app.exec();
 }

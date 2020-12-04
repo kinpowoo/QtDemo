@@ -16,7 +16,7 @@
 #include <QtSql/QtSql>
 #include <QtSql/QtSqlVersion>
 #include <QtDebug>
-#include <QMetaType>
+//#include <QMetaType>
 
 #include "people.h"
 
@@ -27,23 +27,24 @@ class SqliteHelper:public QObject
 public:
     SqliteHelper(QObject *obj = 0);
     ~SqliteHelper();
-    SqliteHelper(const SqliteHelper &p);
-    SqliteHelper& operator=(const SqliteHelper &p);
+//    SqliteHelper(const SqliteHelper &p);
+//    SqliteHelper& operator=(const SqliteHelper &p);
 
-    bool insert(const People &p);
-    bool update(int rowId,const People &p);
-    bool del(int rowId);
-    bool del(const QString &c1,const QString &c2);
-    QVariantList queryAll();
-    QVariantList queryByLimit(int limit);
-    QVariantList queryByCond(const QString &c1,const QString &c2);
-    QVariant queryById(int rowId);
+    Q_INVOKABLE bool insert(const QJsonValue &p);
+    Q_INVOKABLE bool update(int rowId,const QJsonValue &p);
+    Q_INVOKABLE bool del(int rowId);
+    Q_INVOKABLE bool delAll();
+    Q_INVOKABLE bool del(const QString &c1,const QString &c2);
+    Q_INVOKABLE QVariantList queryAll();
+    Q_INVOKABLE QVariantList queryByLimit(int limit);
+    Q_INVOKABLE QVariantList queryByCond(const QString &c1,const QString &c2);
 
 private:
     QSqlDatabase db;
+    QList<People*> m_list;
 
 };
 
-Q_DECLARE_METATYPE(SqliteHelper)
+//Q_DECLARE_METATYPE(SqliteHelper)
 
 #endif // SQLITEHELPER_H

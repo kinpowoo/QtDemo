@@ -32,6 +32,7 @@ public slots:
 
 public:
     Q_INVOKABLE QList<ProvinceModel*> getP();
+    Q_INVOKABLE QVariantList getP2();
     Q_INVOKABLE QStringList getProvinces();
     Q_INVOKABLE QStringList getCities(const QString &provinceName);
     Q_INVOKABLE QStringList getAreas(const QString &cName);

@@ -229,6 +229,14 @@ void XmlParser::readElement(QXmlStreamReader &reader){
 QList<ProvinceModel*> XmlParser::getP(){
     return provinces;
 }
+QVariantList XmlParser::getP2(){
+    QVariantList list;
+    for(int i=0;i<provinces.count();i++){
+        ProvinceModel* p = provinces.at(i);
+        list<<QVariant::fromValue(*p);
+    }
+    return list;
+}
 QStringList XmlParser::getProvinces(){
     return pMap.keys();
 }

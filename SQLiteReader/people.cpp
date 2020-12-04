@@ -1,45 +1,67 @@
 #include "people.h"
 
-People::People(QObject* parent):firstName(),lastName()
+People::People(QObject* parent):m_firstName(),m_lastName()
 {
-    age = 0;
+    m_age = 0;
 }
 People::~People(){
 
 }
 
-People::People(const People &p){
-    this->firstName = p.firstName;
-    this->lastName = p.lastName;
-    this->age = p.age;
+People::People(const People &p):QObject( nullptr ){
+    this->m_firstName = p.m_firstName;
+    this->m_lastName = p.m_lastName;
+    this->m_age = p.m_age;
+    this->m_id = p.m_id;
 }
-People& People::operator=(const People &p){
+People People::operator=(const People &p){
     if(this!=&p){
         People tmp = p;
-        this->firstName = p.firstName;
-        this->lastName = p.lastName;
-        this->age = p.age;
+        this->m_firstName = tmp.m_firstName;
+        this->m_lastName = tmp.m_lastName;
+        this->m_age = tmp.m_age;
+        this->m_id = tmp.m_id;
     }
     return *this;
 }
 
+People *People::operator=(const People *const c){
+    if(this!= c){
+        People tmp(*c);
+        this->m_firstName = tmp.m_firstName;
+        this->m_lastName = tmp.m_lastName;
+        this->m_age = tmp.m_age;
+        this->m_id = tmp.m_id;
+    }
+    return this;
+}
+
+
 
 QString People::getFirstName() const{
-    return firstName;
+    return m_firstName;
 }
 QString People::getLastName() const{
-    return lastName;
+    return m_lastName;
 }
 int People::getAge() const{
-    return age;
+    return m_age;
 }
 
 void People::setFirstName(const QString &n){
-    firstName = n;
+    m_firstName = n;
 }
 void People::setLastName(const QString &n){
-    lastName = n;
+    m_lastName = n;
 }
 void People::setAge(const int a){
-    age = a;
+    m_age = a;
 }
+
+int People::getId() const{
+    return m_id;
+}
+void People::setId(const int id){
+    m_id = id;
+}
+
