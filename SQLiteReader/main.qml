@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.3
 
 import People 1.0
 import SqliteHelper 1.0
-
+import "js/db.js" as Sql
 
 ApplicationWindow {
     id:root
@@ -98,6 +98,11 @@ ApplicationWindow {
         spacing: 10
         width: 640
         height: 50
+
+        Component.onCompleted: {
+            Sql.dbInit()
+        }
+
         TextField{
             id:fnTF
             Layout.leftMargin: 10
@@ -108,6 +113,9 @@ ApplicationWindow {
             Layout.minimumWidth: 100
             Layout.minimumHeight: 40
             placeholderText: qsTr("姓氏")
+            validator: RegExpValidator{
+                regExp: /.{0,2}/g
+            }
         }
         TextField{
             id:lnTF
@@ -120,7 +128,9 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.minimumWidth: 100
             Layout.minimumHeight: 40
-
+            validator: RegExpValidator{
+                regExp: /.{0,3}/g
+            }
         }
 
 
@@ -254,18 +264,35 @@ ApplicationWindow {
                     lastName:lastName,
                     age:parseInt(age)
                 }
-                var res = dbHelper.insert(param)
-                if(res){
-                    alertDialog.msg = qsTr("新增成功!")
-                    listData.clear()
-                    var peopleList = dbHelper.queryAll()
+                //var res = dbHelper.insert(param)
+                var res = Sql.insert(param)
+//                for(var key in res){
+//                    if(key === "1"){
+//                        alertDialog.msg = qsTr("新增成功!")
+//                        listData.clear()
+//                        var peopleList = dbHelper.queryAll()
+//                        for(var j in peopleList){
+//                            var p = peopleList[j]
+//                            p.isSelected = false
+//                            listData.append(p)
+//                        }
+//                    }else{
+//                        alertDialog.msg = qsTr("新增失败!"+res[key])
+//                    }
+//                    alertDialog.visible = true
+//                }
+                if(res !== -1){
+                    alertDialog.msg = qsTr("新增成功! rowid："+res)
+                    //listData.clear()
+                    //var peopleList = dbHelper.queryAll()
+                    var peopleList = Sql.queryLatestOne()
                     for(var j in peopleList){
                         var p = peopleList[j]
                         p.isSelected = false
                         listData.append(p)
                     }
                 }else{
-                    alertDialog.msg = qsTr("新增失败!")
+                    alertDialog.msg = qsTr("新增失败,记录已存在!")
                 }
                 alertDialog.visible = true
             }
@@ -335,18 +362,14 @@ ApplicationWindow {
                     alertDialog.visible = true
                     return
                 }
-                var plist =  dbHelper.queryByCond(firstName,lastName)
+                //var plist =  dbHelper.queryByCond(firstName,lastName)
+                var plist =  Sql.queryByCond(firstName,lastName)
                 listData.clear()
                 root.currentSelected = -1
                 for(var i in plist){
                     var p = plist[i]
-                    listData.append({
-                                    firstName:p.firstName,
-                                    lastName:p.lastName,
-                                    age:p.age,
-                                    id:p.id,
-                                    isSelected:false
-                                    })
+                    p.isSelected = false
+                    listData.append(p)
                 }
             }
         }
@@ -466,7 +489,8 @@ ApplicationWindow {
                 }
 
                 var item = listData.get(root.currentSelected)
-                var isSuccess =  dbHelper.update(item.id,param)
+                //var isSuccess =  dbHelper.update(item.id,param)
+                var isSuccess =  Sql.update(item.id,param)
                 if(isSuccess){
                     alertDialog.msg = qsTr("更新成功!")
                     item.firstName = firstName
@@ -512,19 +536,13 @@ ApplicationWindow {
         text: qsTr("查询所有")
         id:queryAll
         onClicked: {
-            var peopleList =  dbHelper.queryAll()
+            //var peopleList =  dbHelper.queryAll()
+            var peopleList =  Sql.queryAll()
             listData.clear()
             for(var i in peopleList){
                 var p = peopleList[i];
                 p.isSelected = false
                 listData.append(p)
-//                listData.append({
-//                                firstName:p.firstName,
-//                                lastName:p.lastName,
-//                                age:p.age,
-//                                id:p.id,
-//                                isSelected:false
-//                                })
             }
         }
     }
@@ -558,7 +576,8 @@ ApplicationWindow {
                 return
             }
             var item = listData.get(root.currentSelected)
-            let isSuccess = dbHelper.del(item.id)
+            //let isSuccess = dbHelper.del(item.id)
+            let isSuccess = Sql.delById(item.id)
             if(isSuccess){
                 alertDialog.msg = qsTr("删除成功!")
                 listData.remove(root.currentSelected)
@@ -584,7 +603,8 @@ ApplicationWindow {
         height: 40
         text: qsTr("删除所有")
         onClicked: {
-            let isSuccess = dbHelper.delAll()
+            //let isSuccess = dbHelper.delAll()
+            let isSuccess = Sql.delAll()
             if(isSuccess){
                 uFnTF.text = ""
                 uLnTF.text = ""
@@ -667,6 +687,7 @@ ApplicationWindow {
     ScrollView{
         width: 300
         height: 200
+
         x:10
         y:300
         Layout.leftMargin: 20
@@ -675,8 +696,13 @@ ApplicationWindow {
             property int lastIndex: -1
             id:queryResult
             anchors.fill: parent
+
             model: ListModel{
                 id:listData
+            }
+            contentHeight: 200
+            Flickable{
+                flickableDirection:Flickable.HorizontalFlick
             }
 
             delegate: ItemDelegate{
@@ -768,6 +794,5 @@ ApplicationWindow {
             border.color: "gray"
         }
     }
-
 
 }

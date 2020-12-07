@@ -16,6 +16,7 @@
 #include <QtSql/QtSql>
 #include <QtSql/QtSqlVersion>
 #include <QtDebug>
+#include <QVariantMap>
 //#include <QMetaType>
 
 #include "people.h"
@@ -30,7 +31,7 @@ public:
 //    SqliteHelper(const SqliteHelper &p);
 //    SqliteHelper& operator=(const SqliteHelper &p);
 
-    Q_INVOKABLE bool insert(const QJsonValue &p);
+    Q_INVOKABLE QVariantMap insert(const QJsonValue &p);
     Q_INVOKABLE bool update(int rowId,const QJsonValue &p);
     Q_INVOKABLE bool del(int rowId);
     Q_INVOKABLE bool delAll();

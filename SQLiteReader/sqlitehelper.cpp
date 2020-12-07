@@ -38,32 +38,69 @@ SqliteHelper::~SqliteHelper(){
 //}
 
 
-bool SqliteHelper::insert(const QJsonValue &p){
+QVariantMap SqliteHelper::insert(const QJsonValue &p){
     //增
-    qDebug()<<"firstName:"<<p["firstName"].toString()
-           <<"; lastName:"<<p["lastName"].toString()
-           <<"; age:"<<p["age"].toInt();
+    QString c1 = p["firstName"].toString();
+    QString c2 = p["lastName"].toString();
+    int age = p["age"].toInt();
+    qDebug()<<"firstName:"<<c1<<"; lastName:"<<c2<<"; age:"<<age;
 
+    //db.transaction();  //开启事务
+    //db.commit();  //提交事务
     QSqlQuery qry = db.exec();
-    bool isPrepare = qry.prepare( "INSERT INTO names (firstname, lastname,age) VALUES (?,?,?)");
+    QVariantMap map;
+    bool isPrepare = qry.prepare("SELECT COUNT(*) FROM names WHERE firstname=? AND lastname=? AND age=?");
+    qry.bindValue(0,QVariant(c1));
+    qry.bindValue(1,QVariant(c2));
+    qry.bindValue(2,QVariant(age));
     if(!isPrepare){
         qDebug() << qry.lastError();
-        return false;
+        map.insert("0",qry.lastError().text());
+        return map;
+    }
+    if(!qry.exec() ){
+        qDebug() << qry.lastError();
+        map.insert("0",qry.lastError().text());
+        return map;
+    }
+    if(qry.isActive() && qry.isSelect() && qry.next()){
+        QSqlRecord rec = qry.record();
+        int cols = rec.count();
+        for(int c=0;c<cols;c++)
+            qDebug() <<QString( "Column %1: %2" ).arg( c ).arg( rec.fieldName(c));
+        int count = qry.value(0).toInt();
+        qDebug() << "该条信息已存在:"<<count<<"条";
+        map.insert("0","该条记录已存在");
+        return map;
     }
 
-    qry.bindValue(0,QVariant(p["firstName"].toString()));
-    qry.bindValue(1,QVariant(p["lastName"].toString()));
-    qry.bindValue(2,QVariant(p["age"].toInt()));
+
+
+    isPrepare = qry.prepare( "INSERT INTO names (firstname, lastname,age) VALUES (?,?,?)");
+    if(!isPrepare){
+        qDebug() << qry.lastError();
+        map.insert("0",qry.lastError().text());
+        return map;
+    }
+
+
+    qry.bindValue(0,QVariant(c1));
+    qry.bindValue(1,QVariant(c2));
+    qry.bindValue(2,QVariant(age));
 
     if( !qry.exec() ){
         qDebug() << qry.lastError();
-        return false;
+        map.insert("0",qry.lastError().text());
+        return map;
      }else{
         qDebug( "Inserted!" );
-        if(qry.numRowsAffected()>0)
-            return true;
-        else
-            return false;
+        if(qry.numRowsAffected()>0){
+            map.insert("1","插入成功");
+            return map;
+        }else{
+            map.insert("0","插入失败");
+            return map;
+        }
     }
 }
 bool SqliteHelper::update(int rowId,const QJsonValue &p){

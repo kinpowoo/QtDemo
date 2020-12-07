@@ -5,6 +5,7 @@
 #include "sqlitehelper.h"
 #include <QQuickView>
 #include <QDebug>
+#include <QMap>
 
 int main(int argc, char *argv[])
 {
@@ -22,7 +23,6 @@ int main(int argc, char *argv[])
     qRegisterMetaType<QList<People>>("QList<People>");
     qRegisterMetaType<QList<People*>>("QList<People*>");
     //qRegisterMetaType<SqliteHelper>("SqliteHelper");
-
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
